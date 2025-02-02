@@ -12,17 +12,12 @@ import java.util.concurrent.TimeUnit;
 
 @Getter
 @Setter
-public class House extends SocketUser implements IHouse {
+public class House implements IHouse {
     private final int maxCapacity;
     private int sewageLevel;
-    private final int officePort;
-    private final String officeHost;
     private final int tickSpeed;
-    public House(int port, int maxCapacity, int officePort, String officeHost, int tickSpeed) {
-        super(port);
+    public House(int maxCapacity, int tickSpeed) {
         this.maxCapacity = maxCapacity;
-        this.officePort = officePort;
-        this.officeHost = officeHost;
         this.tickSpeed = tickSpeed;
     }
     private void raiseSewageLevel() {
@@ -45,15 +40,7 @@ public class House extends SocketUser implements IHouse {
             return max;
         }
     }
-    @Override
-    public int handleRequest(Method method) throws InvalidMethodException {
-        if (method.methodName().equals("gp")) {
-            return getPumpOut(Integer.parseInt(method.parameter()));
-        }
-        else throw new InvalidMethodException();
-    }
     public void sendSewageAlert() {
-        sendRequest("o:" + "localhost" + "," + port,officeHost,officePort);
         System.out.println("Sending sewage alert");
     }
     public void startSimulation()
@@ -68,11 +55,9 @@ public class House extends SocketUser implements IHouse {
         }, 0, tickSpeed, TimeUnit.MILLISECONDS);
     }
     public static void main(String[] args) throws IOException {
-        int officePort = 8765;
         int housePort = 8767;
         String universalHost = "localhost";
-        House house = new House(housePort, 30, officePort, universalHost, 100);
+        House house = new House(housePort, 100);
         house.startSimulation();
-        house.startListening();
     }
 }

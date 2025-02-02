@@ -32,18 +32,10 @@ public class HouseGUI extends Application implements IRedirector{
         var startButton = new Button("Start");
         startButton.setOnAction(e -> {
             var house = new House(
-                    Integer.parseInt(portField.getText()),
                     Integer.parseInt(maxCapacityField.getText()),
-                    Integer.parseInt(officePortField.getText()),
-                    officeHostField.getText(),
                     Integer.parseInt(tickSpeedField.getText()));
             Thread thread = new Thread(() -> {
-                try {
-                    house.startSimulation();
-                    house.startListening();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                house.startSimulation();
             });
             thread.setDaemon(true);
             thread.start();

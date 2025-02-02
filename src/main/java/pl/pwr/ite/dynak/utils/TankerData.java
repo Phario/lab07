@@ -17,6 +17,12 @@ public class TankerData {
         this.id = id;
         this.isReady = isReady;
     }
+    public TankerData(int id, boolean isReady) {
+        this.tankerPort = null;
+        this.tankerHost = null;
+        this.id = id;
+        this.isReady = isReady;
+    }
     public TankerData(int id, int volume) {
         this.tankerPort = null;
         this.tankerHost = null;

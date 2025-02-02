@@ -33,20 +33,8 @@ public class TankerGUI extends Application implements IRedirector{
         var startButton = new Button("Start");
         startButton.setOnAction(e -> {
             var tanker = new Tanker(
-                    Integer.parseInt(maxCapacityField.getText()),
-                    Integer.parseInt(portField.getText()),
-                    Integer.parseInt(officePortField.getText()),
-                    officeHostField.getText(),
-                    Integer.parseInt(sewagePlantPortField.getText()),
-                    sewagePlantHostField.getText());
-            Thread thread = new Thread(() -> {
-                try {
-                    tanker.registerAtOffice();
-                    tanker.startListening();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            });
+                    Integer.parseInt(maxCapacityField.getText()));
+            Thread thread = new Thread(() -> tanker.registerAtOffice());
             thread.setDaemon(true);
             thread.start();
             System.out.println("Tanker running on port " + portField.getText());

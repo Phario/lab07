@@ -32,17 +32,9 @@ public class OfficeGUI extends Application implements IRedirector {
         var getStatusButton = new Button("Get status");
         getStatusButton.setDisable(true);
         startButton.setOnAction(e -> {
-            var office = new Office(
-                    Integer.parseInt(portField.getText()),
-                    Integer.parseInt(sewagePlantPortField.getText()),
-                    sewagePlantHostField.getText());
+            var office = new Office();
             getStatusButton.setDisable(false);
             Thread thread = new Thread(() -> {
-                try {
-                    office.startListening();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             });
             getStatusButton.setOnAction(f -> new Thread(() -> office.sendGetStatusRequest(Integer.parseInt(tankerIdField.getText()))).start());
             thread.setDaemon(true);

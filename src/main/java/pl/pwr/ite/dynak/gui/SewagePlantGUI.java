@@ -28,16 +28,7 @@ public class SewagePlantGUI extends Application implements IRedirector {
         logTextField.setWrapText(true);
         redirectConsoleOutput(logTextField);
         startButton.setOnAction(e -> {
-            SewagePlant sewagePlant = new SewagePlant(Integer.parseInt(portField.getText()));
-            Thread thread = new Thread(() -> {
-                try {
-                    sewagePlant.startListening();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            });
-            thread.setDaemon(true);
-            thread.start();
+            SewagePlant sewagePlant = new SewagePlant();
             System.out.println("Sewage plant running on port " + portField.getText());
             Platform.runLater(() -> {
                 vBox.getChildren().add(new Spot(90, 90, Color.DARKBLUE, "SP"));
