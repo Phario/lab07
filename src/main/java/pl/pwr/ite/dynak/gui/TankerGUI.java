@@ -32,7 +32,7 @@ public class TankerGUI extends Application implements IRedirector{
         redirectConsoleOutput(logTextField);
         var startButton = new Button("Start");
         startButton.setOnAction(e -> {
-            var tanker = new Tanker(
+            /*var tanker = new Tanker(
                     Integer.parseInt(maxCapacityField.getText()));
             Thread thread = new Thread(() -> tanker.registerAtOffice());
             thread.setDaemon(true);
@@ -43,6 +43,8 @@ public class TankerGUI extends Application implements IRedirector{
                 vBox.getChildren().add(logTextField);
                 startButton.setDisable(true);
             });
+
+             */
         });
         portField.setPromptText("Port");
         maxCapacityField.setPromptText("Max Capacity");

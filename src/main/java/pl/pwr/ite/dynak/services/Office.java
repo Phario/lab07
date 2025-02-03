@@ -26,7 +26,7 @@ public class Office implements IOffice {
     }
     @Override
     public int register(ITanker r, String name) throws RemoteException {
-        tankers.add(new TankerData(staticTankerId,true));
+        tankers.add(new TankerData(staticTankerId,true, r, name));
         System.out.println("Tanker registered with id: " + staticTankerId);
         return staticTankerId++;
     }
@@ -39,6 +39,7 @@ public class Office implements IOffice {
             if (tanker.isReady()) {
                 //set its state to not ready
                 tanker.setReady(false);
+                tanker.getITanker().setJob(house);
                 //return 1 if successful
                 System.out.println("Tanker " + tanker.getId() + " dispatched to sewage collection");
                 return 1;
@@ -56,15 +57,16 @@ public class Office implements IOffice {
             }
         }
     }
-    public void sendGetStatusRequest(int number) {
+    public void sendGetStatusRequest(int number) {//TODO finish this method
         System.out.println("Total sewage dropped off by tanker " + number + ": ");
     }
     public static void main(String[] args) throws IOException {
-        int officePort = 8765;
+        int registryPort = 2000;
+        int officePort = 8882;
         String universalHost = "localhost";
         Office office = new Office();
-        IOffice io = (IOffice) UnicastRemoteObject.exportObject(office, officePort);
-        Registry registry = LocateRegistry.getRegistry(universalHost,officePort);
+        IOffice io = (IOffice) UnicastRemoteObject.exportObject(office, registryPort);
+        Registry registry = LocateRegistry.getRegistry(universalHost, officePort);
         registry.rebind("Office", io);
     }
 }

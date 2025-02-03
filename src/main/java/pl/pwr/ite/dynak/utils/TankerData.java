@@ -1,31 +1,25 @@
 package pl.pwr.ite.dynak.utils;
 
+import interfaces.ITanker;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class TankerData {
-    private final String tankerPort;
-    private final String tankerHost;
     private final int id;
     private boolean isReady;
+    private ITanker iTanker;
     private int totalSewageDroppedOff = 0;
-    public TankerData(int id, String tankerPort, String tankerHost, boolean isReady) {
-        this.tankerPort = tankerPort;
-        this.tankerHost = tankerHost;
+    private String name;
+
+    public TankerData(int id, boolean isReady, ITanker iTanker, String name) {
         this.id = id;
         this.isReady = isReady;
-    }
-    public TankerData(int id, boolean isReady) {
-        this.tankerPort = null;
-        this.tankerHost = null;
-        this.id = id;
-        this.isReady = isReady;
+        this.iTanker = iTanker;
+        this.name = name;
     }
     public TankerData(int id, int volume) {
-        this.tankerPort = null;
-        this.tankerHost = null;
         this.id = id;
         this.totalSewageDroppedOff += volume;
     }

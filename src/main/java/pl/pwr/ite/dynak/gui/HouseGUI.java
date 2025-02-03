@@ -22,9 +22,8 @@ public class HouseGUI extends Application implements IRedirector{
         vBox.getChildren().addAll(hBox);
         var portField = new TextField();
         var maxCapacityField = new TextField();
-        var officePortField = new TextField();
-        var officeHostField = new TextField();
         var tickSpeedField = new TextField();
+        var houseNameField = new TextField();
         var logTextField = new TextArea();
         logTextField.setEditable(false);
         logTextField.setWrapText(true);
@@ -33,7 +32,8 @@ public class HouseGUI extends Application implements IRedirector{
         startButton.setOnAction(e -> {
             var house = new House(
                     Integer.parseInt(maxCapacityField.getText()),
-                    Integer.parseInt(tickSpeedField.getText()));
+                    Integer.parseInt(tickSpeedField.getText()),
+                    houseNameField.getText());
             Thread thread = new Thread(() -> {
                 house.startSimulation();
             });
@@ -48,12 +48,10 @@ public class HouseGUI extends Application implements IRedirector{
         });
         portField.setPromptText("Port");
         maxCapacityField.setPromptText("Max Capacity");
-        officePortField.setPromptText("Office Port");
-        officeHostField.setPromptText("Office Host");
         tickSpeedField.setPromptText("Tick Speed");
-        hBox.getChildren().addAll(portField, maxCapacityField, officePortField);
+        hBox.getChildren().addAll(portField, maxCapacityField, houseNameField);
         var hBox2 = new HBox(10);
-        hBox2.getChildren().addAll(officeHostField, tickSpeedField, startButton);
+        hBox2.getChildren().addAll(tickSpeedField, startButton);
         vBox.getChildren().add(hBox2);
         Scene scene = new Scene(vBox, 500, 300);
         stage.setTitle("House");

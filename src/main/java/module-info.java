@@ -3,6 +3,7 @@ module labzeroseven {
     requires org.slf4j;
     requires javafx.controls;
     requires javafx.graphics;
+    requires transitive java.rmi;
     requires sewagelib;
     exports pl.pwr.ite.dynak.gui;
     exports pl.pwr.ite.dynak.services;

@@ -1,5 +1,6 @@
 package pl.pwr.ite.dynak.services;
 
+import interfaces.IOffice;
 import interfaces.ISewagePlant;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +9,9 @@ import pl.pwr.ite.dynak.utils.Method;
 import pl.pwr.ite.dynak.utils.TankerData;
 
 import java.io.IOException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 @Getter
@@ -50,7 +54,12 @@ public class SewagePlant implements ISewagePlant {
         updateTankerData(number, 0);
     }
     public static void main(String[] args) throws IOException {
-        int sewagePlantPort = 8766;
+        int registryPort = 2000;
+        int sewagePlantPort = 8883;
+        String universalHost = "localhost";
         SewagePlant sewagePlant = new SewagePlant();
+        ISewagePlant isp = (ISewagePlant) UnicastRemoteObject.exportObject(sewagePlant, registryPort);
+        Registry registry = LocateRegistry.getRegistry(universalHost, sewagePlantPort);
+        registry.rebind("SewagePlant", isp);
     }
 }
