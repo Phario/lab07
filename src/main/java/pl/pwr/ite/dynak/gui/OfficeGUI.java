@@ -1,6 +1,7 @@
 package pl.pwr.ite.dynak.gui;
 
 import interfaces.IOffice;
+import interfaces.ISewagePlant;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -12,6 +13,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import pl.pwr.ite.dynak.services.Office;
+
+import java.rmi.NotBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -39,12 +43,19 @@ public class OfficeGUI extends Application implements IRedirector {
                 int registryPort = Integer.parseInt(registryPortField.getText());
                 int officePort = Integer.parseInt(portField.getText());
                 String universalHost = "localhost";
-                Office office = new Office();
-                IOffice io = (IOffice) UnicastRemoteObject.exportObject(office, officePort);
                 Registry registry = LocateRegistry.getRegistry(universalHost, registryPort);
+                ISewagePlant iSewagePlant = (ISewagePlant) registry.lookup("SewagePlant");
+                Office office = new Office(iSewagePlant);
+                IOffice io = (IOffice) UnicastRemoteObject.exportObject(office, officePort);
                 registry.rebind("Office", io);
-                getStatusButton.setOnAction(f -> new Thread(() -> office.sendGetStatusRequest(Integer.parseInt(tankerIdField.getText()))).start());
-            } catch (RemoteException eMSG) {
+                getStatusButton.setOnAction(f -> new Thread(() -> {
+                    try {
+                        office.sendGetStatusRequest(Integer.parseInt(tankerIdField.getText()));
+                    } catch (RemoteException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }).start());
+            } catch (RemoteException | NotBoundException eMSG ) {
                 System.out.println(eMSG.getMessage());
             }
             System.out.println("Office running on port " + portField.getText());

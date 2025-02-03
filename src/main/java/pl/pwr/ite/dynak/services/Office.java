@@ -2,6 +2,7 @@ package pl.pwr.ite.dynak.services;
 
 import interfaces.IHouse;
 import interfaces.IOffice;
+import interfaces.ISewagePlant;
 import interfaces.ITanker;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import pl.pwr.ite.dynak.utils.Method;
 import pl.pwr.ite.dynak.utils.TankerData;
 
 import java.io.IOException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -21,7 +23,9 @@ import java.util.ArrayList;
 public class Office implements IOffice {
     private static int staticTankerId = 1;
     private ArrayList<TankerData> tankers;
-    public Office() {
+    private final ISewagePlant iSewagePlant;
+    public Office(ISewagePlant iSewagePlant) {
+        this.iSewagePlant = iSewagePlant;
         this.tankers = new ArrayList<>();
     }
     @Override
@@ -57,16 +61,18 @@ public class Office implements IOffice {
             }
         }
     }
-    public void sendGetStatusRequest(int number) {//TODO finish this method
-        System.out.println("Total sewage dropped off by tanker " + number + ": ");
+    public void sendGetStatusRequest(int number) throws RemoteException {
+        int amount = iSewagePlant.getStatus(number);
+        System.out.println("Total sewage dropped off by tanker " + number + ": " + amount);
     }
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, NotBoundException {
         int registryPort = 2000;
         int officePort = 8882;
         String universalHost = "localhost";
-        Office office = new Office();
-        IOffice io = (IOffice) UnicastRemoteObject.exportObject(office, officePort);
         Registry registry = LocateRegistry.getRegistry(universalHost, registryPort);
+        ISewagePlant iSewagePlant = (ISewagePlant) registry.lookup("SewagePlant");
+        Office office = new Office(iSewagePlant);
+        IOffice io = (IOffice) UnicastRemoteObject.exportObject(office, officePort);
         registry.rebind("Office", io);
     }
 }
