@@ -7,6 +7,7 @@ import lombok.Setter;
 import pl.pwr.ite.dynak.utils.InvalidMethodException;
 import pl.pwr.ite.dynak.utils.Method;
 import java.io.IOException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -21,10 +22,11 @@ public class House implements IHouse {
     private final int maxCapacity;
     private int sewageLevel;
     private final int tickSpeed;
-    private IOffice iOffice;
+    private final IOffice iOffice;
     private IHouse iHouse;
     private final String name;
-    public House(int maxCapacity, int tickSpeed, String name) {
+    public House(IOffice iOffice, int maxCapacity, int tickSpeed, String name) {
+        this.iOffice = iOffice;
         this.maxCapacity = maxCapacity;
         this.tickSpeed = tickSpeed;
         this.name = name;
@@ -74,10 +76,16 @@ public class House implements IHouse {
         int registryPort = 2000;
         int housePort = 8880;
         String universalHost = "localhost";
-        House house = new House(registryPort, 100, "House");
-        IHouse ih = (IHouse) UnicastRemoteObject.exportObject(house, registryPort);
-        Registry registry = LocateRegistry.getRegistry(universalHost, housePort);
-        registry.rebind("House", ih);
-        house.startSimulation();
+        try {
+            Registry registry = LocateRegistry.getRegistry(universalHost, registryPort);
+            IOffice iOffice = (IOffice) registry.lookup("Office");
+            House house = new House(iOffice,30, 800, "House");
+            IHouse ih = (IHouse) UnicastRemoteObject.exportObject(house, housePort);
+            house.setIHouse(ih);
+            registry.rebind("House", ih);
+            house.startSimulation();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        }
     }
 }

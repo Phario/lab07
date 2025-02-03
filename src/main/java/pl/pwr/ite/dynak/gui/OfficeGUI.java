@@ -1,5 +1,6 @@
 package pl.pwr.ite.dynak.gui;
 
+import interfaces.IOffice;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -11,8 +12,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import pl.pwr.ite.dynak.services.Office;
-
-import java.io.IOException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
 public class OfficeGUI extends Application implements IRedirector {
     @Override
@@ -21,8 +24,6 @@ public class OfficeGUI extends Application implements IRedirector {
         var vBox = new VBox(10);
         vBox.getChildren().addAll(hBox);
         var portField = new TextField();
-        var sewagePlantHostField = new TextField();
-        var sewagePlantPortField = new TextField();
         var tankerIdField = new TextField();
         var logTextField = new TextArea();
         logTextField.setEditable(false);
@@ -30,15 +31,22 @@ public class OfficeGUI extends Application implements IRedirector {
         redirectConsoleOutput(logTextField);
         var startButton = new Button("Start");
         var getStatusButton = new Button("Get status");
+        var registryPortField = new TextField();
+        registryPortField.setPromptText("Registry Port");
         getStatusButton.setDisable(true);
         startButton.setOnAction(e -> {
-            var office = new Office();
-            getStatusButton.setDisable(false);
-            Thread thread = new Thread(() -> {
-            });
-            getStatusButton.setOnAction(f -> new Thread(() -> office.sendGetStatusRequest(Integer.parseInt(tankerIdField.getText()))).start());
-            thread.setDaemon(true);
-            thread.start();
+            try {
+                int registryPort = Integer.parseInt(registryPortField.getText());
+                int officePort = Integer.parseInt(portField.getText());
+                String universalHost = "localhost";
+                Office office = new Office();
+                IOffice io = (IOffice) UnicastRemoteObject.exportObject(office, officePort);
+                Registry registry = LocateRegistry.getRegistry(universalHost, registryPort);
+                registry.rebind("Office", io);
+                getStatusButton.setOnAction(f -> new Thread(() -> office.sendGetStatusRequest(Integer.parseInt(tankerIdField.getText()))).start());
+            } catch (RemoteException eMSG) {
+                System.out.println(eMSG.getMessage());
+            }
             System.out.println("Office running on port " + portField.getText());
             Platform.runLater(() -> {
                 vBox.getChildren().add(new Spot(90, 90, Color.DARKGREEN, "O"));
@@ -47,10 +55,8 @@ public class OfficeGUI extends Application implements IRedirector {
             });
         });
         portField.setPromptText("Port");
-        sewagePlantHostField.setPromptText("Sewage plant's host");
-        sewagePlantPortField.setPromptText("Sewage plant's port");
         tankerIdField.setPromptText("Tanker ID");
-        hBox.getChildren().addAll(portField, sewagePlantPortField, sewagePlantHostField, startButton);
+        hBox.getChildren().addAll(portField, startButton);
         var hBox2 = new HBox(10);
         hBox2.getChildren().addAll(tankerIdField, getStatusButton);
         vBox.getChildren().add(hBox2);

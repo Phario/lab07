@@ -22,7 +22,7 @@ public class Office implements IOffice {
     private static int staticTankerId = 1;
     private ArrayList<TankerData> tankers;
     public Office() {
-        tankers = new ArrayList<>();
+        this.tankers = new ArrayList<>();
     }
     @Override
     public int register(ITanker r, String name) throws RemoteException {
@@ -65,8 +65,8 @@ public class Office implements IOffice {
         int officePort = 8882;
         String universalHost = "localhost";
         Office office = new Office();
-        IOffice io = (IOffice) UnicastRemoteObject.exportObject(office, registryPort);
-        Registry registry = LocateRegistry.getRegistry(universalHost, officePort);
+        IOffice io = (IOffice) UnicastRemoteObject.exportObject(office, officePort);
+        Registry registry = LocateRegistry.getRegistry(universalHost, registryPort);
         registry.rebind("Office", io);
     }
 }

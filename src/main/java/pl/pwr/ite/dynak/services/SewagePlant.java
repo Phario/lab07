@@ -58,8 +58,8 @@ public class SewagePlant implements ISewagePlant {
         int sewagePlantPort = 8883;
         String universalHost = "localhost";
         SewagePlant sewagePlant = new SewagePlant();
-        ISewagePlant isp = (ISewagePlant) UnicastRemoteObject.exportObject(sewagePlant, registryPort);
-        Registry registry = LocateRegistry.getRegistry(universalHost, sewagePlantPort);
+        ISewagePlant isp = (ISewagePlant) UnicastRemoteObject.exportObject(sewagePlant, sewagePlantPort);
+        Registry registry = LocateRegistry.getRegistry(universalHost, registryPort);
         registry.rebind("SewagePlant", isp);
     }
 }

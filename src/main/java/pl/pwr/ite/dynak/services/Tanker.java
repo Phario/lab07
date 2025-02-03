@@ -33,7 +33,7 @@ public class Tanker implements ITanker {
     }
     public void registerAtOffice(ITanker iTanker, String name) {
         try {
-            iOffice.register(iTanker, name);
+            this.id = iOffice.register(iTanker, name);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -58,7 +58,6 @@ public class Tanker implements ITanker {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
-
             contents = 0;
         }
     }
@@ -72,8 +71,8 @@ public class Tanker implements ITanker {
             IOffice iOffice = (IOffice) registry.lookup("Office");
             ISewagePlant iSewagePlant = (ISewagePlant) registry.lookup("SewagePlant");
             Tanker tanker = new Tanker(30, iSewagePlant, iOffice, "Tanker");
-            ITanker iTanker = (ITanker) UnicastRemoteObject.exportObject(tanker, registryPort);
-            registry = LocateRegistry.getRegistry(universalHost, tankerPort);
+            ITanker iTanker = (ITanker) UnicastRemoteObject.exportObject(tanker, tankerPort);
+            registry = LocateRegistry.getRegistry(universalHost, registryPort);
             registry.rebind("Tanker", iTanker);
             tanker.registerAtOffice(iTanker, name);
         } catch (RemoteException | NotBoundException e) {
