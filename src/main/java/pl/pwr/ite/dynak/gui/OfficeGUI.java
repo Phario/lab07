@@ -62,12 +62,13 @@ public class OfficeGUI extends Application implements IRedirector {
             Platform.runLater(() -> {
                 vBox.getChildren().add(new Spot(90, 90, Color.DARKGREEN, "O"));
                 vBox.getChildren().add(logTextField);
+                getStatusButton.setDisable(false);
                 startButton.setDisable(true);
             });
         });
         portField.setPromptText("Port");
         tankerIdField.setPromptText("Tanker ID");
-        hBox.getChildren().addAll(portField, startButton);
+        hBox.getChildren().addAll(portField, registryPortField, startButton);
         var hBox2 = new HBox(10);
         hBox2.getChildren().addAll(tankerIdField, getStatusButton);
         vBox.getChildren().add(hBox2);

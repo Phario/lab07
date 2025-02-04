@@ -42,7 +42,7 @@ public class Tanker implements ITanker {
     @Override
     public void setJob(IHouse house) throws RemoteException {
         //get house's sewage
-        house.getPumpOut(maxCapacity);
+        contents += house.getPumpOut(maxCapacity);
         System.out.println("Amount of sewage pumped from house: " + contents);
         //go to the sewage plant and offload
         iSewagePlant.setPumpIn(id, offloadCargo());
